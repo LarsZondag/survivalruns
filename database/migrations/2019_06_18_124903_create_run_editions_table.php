@@ -16,14 +16,14 @@ class CreateRunEditionsTable extends Migration
     {
         Schema::create('run_editions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('uvponline_id')->unique();
+            $table->unsignedBigInteger('uvponline_id')->unique()->nullable();
             $table->date('date');
-            $table->date('enrollment_start_date');
-            $table->boolean('LSR');
-            $table->boolean('MSR');
-            $table->boolean('KSR');
-            $table->boolean('JSR');
-            $table->boolean('qualification_run');
+            $table->date('enrollment_start_date')->nullable();
+            $table->boolean('LSR')->default(false);
+            $table->boolean('MSR')->default(false);
+            $table->boolean('KSR')->default(false);
+            $table->boolean('JSR')->default(false);
+            $table->boolean('qualification_run')->default(false);
             $table->integer('year');
             $table->string('distances');
             $table->unsignedBigInteger('run_id');

@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Run;
+use App\RunEdition;
+use Carbon\Carbon;
 use Closure;
 use DOMDocument;
 use Exception;
@@ -46,40 +48,43 @@ class UpdateRunInformation
             $columns = $row->getElementsByTagName('td');
 
             // Update or create the Run entry
-            $organisator_url = $columns->item(9)->getElementsByTagName('a')->item(0)->getAttribute('href');
-            $organisator_url = Run::clean_url($organisator_url);
-            $run = Run::firstOrNew(['organiser_url' => $organisator_url]);
+            $organisor_url = $columns->item(9)->getElementsByTagName('a')->item(0)->getAttribute('href');
+            $organisor_url = Run::clean_url($organisor_url);
+            $run = Run::firstOrNew(['organiser_url' => $organisor_url]);
 
             // Name
-            $organisator_naam = $columns->item(9)->textContent;
-            $run->organiser_name = $organisator_naam;
+            $organiser_name = $columns->item(9)->textContent;
+            $run->organiser_name = $organiser_name;
 
             // Place
-            $plaats = Run::clean_place_name($columns->item(1)->textContent);
-            $run->location = $plaats;
+            $location = Run::clean_place_name($columns->item(1)->textContent);
+            $run->location = $location;
             $run->save();
 
             // Update or create the RunEdition entry
+            $run_edition = RunEdition::firstOrNew(['run_id' => $run->id, 'year' => $request->year]);
 
             // Datum
-            $datum = $columns->item(0)->textContent;
+            $date = $columns->item(0)->textContent;
+            if (is_string($date)) {
+                $run_edition->date = Carbon::parse($date);
+            }
 
             // Circuits
-            $circuit_LSR = $columns->item(2)->textContent == "L";
-            $circuit_MSR = $columns->item(3)->textContent == "M";
-            $circuit_KSR = $columns->item(4)->textContent == "K";
-            $circuit_JSR = $columns->item(5)->textContent == "J";
+            $run_edition->LSR = $columns->item(2)->textContent == "L";
+            $run_edition->MSR = $columns->item(3)->textContent == "M";
+            $run_edition->KSR = $columns->item(4)->textContent == "K";
+            $run_edition->JSR = $columns->item(5)->textContent == "J";
 
             // Kwalificatie run
-            $kwalificatie_run = strpos($columns->item(6)->textContent, "run") !== false;
+            $run_edition->qualification_run = strpos($columns->item(6)->textContent, "run") !== false;
 
             // Afstanden
-            $afstanden = $columns->item(7)->textContent;
+            $run_edition->distances = $columns->item(7)->textContent;
 
             // Inschrijven
-            $inschrijven_beschikbaar = $columns->item(10)->textContent === ">schrijf hier in<";
-            $inschrijf_link = null;
-
+            $enrollment_open = $columns->item(10)->textContent === ">schrijf hier in<";
+            $run_edition->save();
             echo "<br>";
 
         }

@@ -25,6 +25,9 @@ class RunEdition extends Model
 {
 
     protected $protected = [];
+    protected $fillable = ['run_id', 'year'];
+
+    protected $dates = ['date', 'enrollment_start_date'];
 
     public function run()
     {
