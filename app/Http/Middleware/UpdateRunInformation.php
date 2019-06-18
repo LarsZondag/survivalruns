@@ -37,7 +37,6 @@ class UpdateRunInformation
 
         $table = $agenda->getElementsByTagName('table')->item(0);
         $rows = $table->getElementsByTagName('tr');
-        $header = $rows->item(0);
         $processedHeader = false;
         foreach ($rows as $row) {
             if (!$processedHeader) {
@@ -64,7 +63,7 @@ class UpdateRunInformation
             // Update or create the RunEdition entry
             $run_edition = RunEdition::firstOrNew(['run_id' => $run->id, 'year' => $request->year]);
 
-            // Datum
+            // Date
             $date = $columns->item(0)->textContent;
             if (is_string($date)) {
                 $run_edition->date = Carbon::parse($date);
@@ -76,17 +75,18 @@ class UpdateRunInformation
             $run_edition->KSR = $columns->item(4)->textContent == "K";
             $run_edition->JSR = $columns->item(5)->textContent == "J";
 
-            // Kwalificatie run
+            // Qualification run
             $run_edition->qualification_run = strpos($columns->item(6)->textContent, "run") !== false;
 
-            // Afstanden
+            // Distances
             $run_edition->distances = $columns->item(7)->textContent;
 
-            // Inschrijven
-            $enrollment_open = $columns->item(10)->textContent === ">schrijf hier in<";
-            $run_edition->save();
-            echo "<br>";
+            // Enrollment
+            $run_edition->enrollment_open = $columns->item(10)->textContent === ">schrijf hier in<";
 
+            // uvponline_id
+            $run_edition->uvponline_id = $this->get_uvponline_id($columns);
+            $run_edition->save();
         }
 
         return $next($request);
@@ -101,14 +101,14 @@ class UpdateRunInformation
     private function get_uvponline_id($columns)
     {
         $uvponline_id = null;
-        $aElements = $columns->item(10)->getElementsByTagName('a');
+        $aElements = $columns->item(10)->getElementsByTagName('a'); // Enrollment
         if ($aElements->count() > 0) {
             $inschrijf_link = $aElements->item(0)->getAttribute('href');
             $link_array = explode("/", $inschrijf_link);
             $uvponline_id = (int)end($link_array);
         }
 
-        $rElements = $columns->item(10)->getElementsByTagName('a');
+        $rElements = $columns->item(11)->getElementsByTagName('a'); // Results
         if ($rElements->count() > 0) {
             $results_link = $rElements->item(0)->getAttribute('href');
             $link_array = explode("/", $results_link);

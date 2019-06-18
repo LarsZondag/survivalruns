@@ -18,6 +18,7 @@ class CreateRunEditionsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('uvponline_id')->unique()->nullable();
             $table->date('date');
+            $table->boolean('enrollment_open')->default(false);
             $table->date('enrollment_start_date')->nullable();
             $table->boolean('LSR')->default(false);
             $table->boolean('MSR')->default(false);
