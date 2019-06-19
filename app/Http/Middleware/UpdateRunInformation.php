@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Organiser;
 use App\Run;
 use Carbon\Carbon;
 use Closure;
@@ -27,8 +28,8 @@ class UpdateRunInformation
         if (!isset($request->year)) {
             throw new Exception('No year was set.');
         }
-        $url = 'https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema/' . $request->year;
-        $html = file_get_contents($url);
+        $organiser_url = 'https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema/' . $request->year;
+        $html = file_get_contents($organiser_url);
         $dom = new domDocument;
         $dom->loadHTML($html);
         $dom->preserveWhiteSpace = false;
@@ -45,23 +46,23 @@ class UpdateRunInformation
 
             $columns = $row->getElementsByTagName('td');
 
-            // Update or create the Run entry
-            $organisor_url = $columns->item(9)->getElementsByTagName('a')->item(0)->getAttribute('href');
+            // Update or create the Organiser entry
+            $organiser_url = $columns->item(9)->getElementsByTagName('a')->item(0)->getAttribute('href');
+            $organiser_url = Organiser::clean_url($organiser_url);
+
+            $organiser_name = $columns->item(9)->textContent;
+
+            $organiser_location = Organiser::clean_place_name($columns->item(1)->textContent);
+
+            $organiser = Organiser::updateOrCreate(['url' => $organiser_url],
+                ['name' => $organiser_name, 'location' => $organiser_location]);
 
             // Date
             $date = $columns->item(0)->textContent;
             $date = Carbon::parse($date);
-            $run = Run::firstOrNew(['organiser_url' => $organisor_url, 'date' => $date]);
+            $run = Run::firstOrNew(['organiser_id' => $organiser->id, 'date' => $date]);
 
             $run->year = $request->year;
-
-            // Name
-            $organiser_name = $columns->item(9)->textContent;
-            $run->organiser_name = $organiser_name;
-
-            // Place
-            $location = Run::clean_place_name($columns->item(1)->textContent);
-            $run->location = $location;
 
             // Circuits
             $run->LSR = $columns->item(2)->textContent == "L";
@@ -79,8 +80,8 @@ class UpdateRunInformation
             $run->enrollment_open = $columns->item(10)->textContent === ">schrijf hier in<";
 
             // uvponline_id
-            $run->uvponline_enrollment_id = $this->get_uvponline_enrollment_id($columns);
-            $run->uvponline_enrollment_id = $this->get_uvponline_results_id($columns);
+            $run->uvponline_enrollment_id = $this->get_uvponline_enrollment_id($columns) ?: $run->uvponline_enrollment_id;
+            $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
 
             $run->save();
         }

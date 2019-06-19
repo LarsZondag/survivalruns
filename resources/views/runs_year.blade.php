@@ -89,10 +89,13 @@
                 Organiser
             </th>
             <th>
-                Enrollment url
+                Enrollment
             </th>
             <th>
-                Results url
+                Preliminary results
+            </th>
+            <th>
+                Final results
             </th>
         </tr>
         @foreach($runs as $run)
@@ -101,7 +104,7 @@
                     {{$run->date->format('d-m-Y')}}
                 </td>
                 <td>
-                    {{$run->location}}
+                    {{$run->organiser->location}}
                 </td>
                 <td>
                     @if($run->LSR)
@@ -132,18 +135,22 @@
                     {{$run->distances}}
                 </td>
                 <td>
-                    <a href="{{$run->organiser_url}}">{{$run->organiser_name}}</a>
+                    <a href="{{$run->organiser->url}}">{{$run->organiser->name}}</a>
                 </td>
                 <td>
-                    @if(isset($run->uvponline_id) && $run->enrollment_open)
-                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll
-                            here</a>
+                    @if(isset($run->uvponline_enrollment_id) && $run->enrollment_open)
+                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_enrollment_id}}">enroll</a>
                     @endif
                 </td>
                 <td>
-                    @if(isset($run->uvponline_id) && $run->enrollment_open)
-                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">results
-                            here</a>
+                    @if(isset($run->uvponline_enrollment_id) && !isset($run->uvponline_results_id))
+                        <a href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_enrollment_id}}">preliminary
+                            results</a>
+                    @endif
+                </td>
+                <td>
+                    @if(isset($run->uvponline_results_id))
+                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_enrollment_id}}">results</a>
                     @endif
                 </td>
             </tr>

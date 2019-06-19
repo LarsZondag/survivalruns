@@ -17,7 +17,6 @@ class CreateRunsTable extends Migration
         Schema::create('runs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->date('date');
-            $table->string('location');
             $table->boolean('enrollment_open')->default(false);
             $table->date('enrollment_start_date')->nullable();
             $table->boolean('LSR')->default(false);
@@ -27,11 +26,11 @@ class CreateRunsTable extends Migration
             $table->boolean('qualification_run')->default(false);
             $table->integer('year');
             $table->string('distances');
-            $table->string('organiser_name');
-            $table->string('organiser_url');
+            $table->unsignedBigInteger('organiser_id');
+            $table->foreign('organiser_id')->references('id')->on('organisers');
             $table->unsignedBigInteger('uvponline_enrollment_id')->unique()->nullable();
             $table->unsignedBigInteger('uvponline_results_id')->unique()->nullable();
-            $table->unique(['organiser_url', 'date']);
+            $table->unique(['organiser_id', 'date']);
             $table->timestamps();
         });
     }
