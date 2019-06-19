@@ -2,36 +2,15 @@
 
 namespace App;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Run
- *
- * @package App
- * @property int    $id
- * @property string $organiser_name
- * @property string $organiser_url
- * @property string $location
- *
- */
 class Run extends Model
 {
 
-    protected $protected = [];
-    protected $fillable = ['organiser_url'];
+    protected $fillable = ['organiser_url', 'date'];
 
-    public function runEditions()
-    {
-        $this->hasMany(RunEdition::class);
-    }
+    protected $dates = ['date'];
 
-    /**
-     * @param string $url
-     *
-     * @return mixed
-     * @throws Exception
-     */
     static function clean_url(string $url)
     {
         $url_components = parse_url($url);

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRunEditionsTable extends Migration
+class CreateRunsTable extends Migration
 {
 
     /**
@@ -14,10 +14,10 @@ class CreateRunEditionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('run_editions', function (Blueprint $table) {
+        Schema::create('runs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('uvponline_id')->unique()->nullable();
             $table->date('date');
+            $table->string('location');
             $table->boolean('enrollment_open')->default(false);
             $table->date('enrollment_start_date')->nullable();
             $table->boolean('LSR')->default(false);
@@ -27,9 +27,11 @@ class CreateRunEditionsTable extends Migration
             $table->boolean('qualification_run')->default(false);
             $table->integer('year');
             $table->string('distances');
-            $table->unsignedBigInteger('run_id');
-            $table->foreign('run_id')->references('id')->on('runs');
-            $table->unique(['year', 'run_id']);
+            $table->string('organiser_name');
+            $table->string('organiser_url');
+            $table->unsignedBigInteger('uvponline_enrollment_id')->unique()->nullable();
+            $table->unsignedBigInteger('uvponline_results_id')->unique()->nullable();
+            $table->unique(['organiser_url', 'date']);
             $table->timestamps();
         });
     }
@@ -41,6 +43,6 @@ class CreateRunEditionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('run_editions');
+        Schema::dropIfExists('runs');
     }
 }
