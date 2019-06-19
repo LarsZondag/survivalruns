@@ -135,7 +135,7 @@
                     {{$run->distances}}
                 </td>
                 <td>
-                    <a href="{{$run->organiser->url}}">{{$run->organiser->name}}</a>
+                    <a href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
                 </td>
                 <td>
                     @if(isset($run->uvponline_enrollment_id) && $run->enrollment_open)
