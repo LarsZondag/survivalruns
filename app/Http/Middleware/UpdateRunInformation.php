@@ -28,8 +28,8 @@ class UpdateRunInformation
         if (!isset($request->year)) {
             throw new Exception('No year was set.');
         }
-        $organiser_url = 'https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema/' . $request->year;
-        $html = file_get_contents($organiser_url);
+        $url = 'https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema/' . $request->year;
+        $html = file_get_contents($url);
         $dom = new domDocument;
         $dom->loadHTML($html);
         $dom->preserveWhiteSpace = false;
@@ -84,6 +84,7 @@ class UpdateRunInformation
             $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
 
             $run->save();
+            $run->updateParticipants();
         }
 
         return $next($request);
