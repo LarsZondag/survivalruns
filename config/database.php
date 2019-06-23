@@ -70,18 +70,14 @@ return [
         ],
 
         'pgsql' => [
-            'driver'         => 'pgsql',
-            'url'            => env('DATABASE_URL'),
-            'host'           => $host,
-            'database'       => $database,
-            'username'       => $username,
-            'password'       => $password,
-            'port'           => env('DB_PORT', '5432'),
-            'charset'        => 'utf8',
-            'prefix'         => '',
-            'prefix_indexes' => true,
-            'schema'         => 'public',
-            'sslmode'        => 'prefer',
+            'driver'   => 'pgsql',
+            'host'     => $host,
+            'database' => $database,
+            'username' => $username,
+            'password' => $password,
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'public',
         ],
 
         'sqlsrv' => [
