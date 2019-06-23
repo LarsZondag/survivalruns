@@ -84,7 +84,7 @@ class UpdateRunInformation
             $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
 
             $run->save();
-            if (is_null($run->details_updated) || $run->details_updated->diffInMinutes() > 10) {
+            if (is_null($run->details_updated) || $run->details_updated->diffInMinutes() > 60) {
                 $run->updateParticipants();
             }
         }
