@@ -59,7 +59,8 @@
             "@php artisan key:generate --ansi"
         ],
         "post-install-cmd": [
-            "chmod -R 775 public/"
+            "chmod -R 775 public/",
+            "@php artisan migrate"
         ]
     }
 }

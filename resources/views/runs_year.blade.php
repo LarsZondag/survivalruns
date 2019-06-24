@@ -8,7 +8,7 @@
             <li>
                 <div class="collapsible-header">
                     <span class="date">{{$run->date->format('d-m-Y')}}</span>
-                    <span class="organiser">{{$run->organiser->location}}</span>
+                    <span class="location">{{$run->organiser->location}}</span>
                     @if($run->JSR)
                         <div class="badge yellow brd-yellow lighten-2"> J</div>
                     @endif
@@ -21,13 +21,17 @@
                     @if($run->LSR)
                         <div class="badge grey brd-black lighten-4"> L</div>
                     @endif
-                    <span class="badge">{{$run->participants->count()}}</span>
+
+                    <span>{{$run->distances}}</span>
+
+                    @if($run->participants->count() > 0)
+                        <span class="badge">{{$run->participants->count()}}</span>
+                    @endif
                 </div>
                 <div class="collapsible-body">
                     @if($run->qualification_run)
                         Yes
                     @endif
-                    {{$run->distances}}
                     <a href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
                     @if(isset($run->uvponline_enrollment_id) && $run->enrollment_open)
                         <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_enrollment_id}}">enroll</a>
@@ -40,6 +44,7 @@
                         <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_enrollment_id}}">results</a>
                     @endif
                     @if($run->participants->count() > 0)
+                        <h4>Enrollments from Delft:</h4>
                         <ul>
                             @foreach($run->participants as $participant)
                                 <li>{{$participant->first_name . $participant->last_name}}</li>

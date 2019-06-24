@@ -22,7 +22,7 @@ div.badge {
 }
 
 .collapsible-header > span {
-  margin-right: 4px;
+  margin: 0 2px;
 }
 
 span.date {
