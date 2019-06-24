@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Log;
  * @property integer year
  * @property string  distances
  * @property integer organiser_id
- * @property integer uvponline_enrollment_id
+ * @property integer uvponline_id
  * @property integer uvponline_results_id
  * @property Carbon  details_updated
  */
@@ -47,11 +47,11 @@ class Run extends Model
 
     public function updateParticipants()
     {
-        if (!isset($this->uvponline_enrollment_id)) {
+        if (!isset($this->uvponline_id)) {
             return;
         }
 
-        $url = "https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/" . $this->uvponline_enrollment_id;
+        $url = "https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/" . $this->uvponline_id;
         $html = file_get_contents($url);
         $dom = new DOMDocument;
         $dom->loadHTML($html);

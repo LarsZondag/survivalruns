@@ -17,10 +17,21 @@
                     <span class="date">{{$run->date->format('d-m-Y')}}</span>
                     <span class="location">{{$run->organiser->location}}</span>
                     <div class="circuits">
-                        <div class="badge yellow brd-yellow lighten-2 {{$run->JSR ? '' : 'vis-hidden'}}">J</div>
-                        <div class="badge blue brd-blue lighten-4 {{$run->KSR ? '' : 'vis-hidden'}}">K</div>
-                        <div class="badge red brd-red lighten-4 {{$run->MSR ? '' : 'vis-hidden'}}">M</div>
-                        <div class="badge grey brd-black lighten-4 {{$run->LSR ? '' : 'vis-hidden'}}">L</div>
+                        <div class="tooltipped badge yellow brd-yellow lighten-2 {{$run->JSR ? '' : 'vis-hidden'}}"
+                             data-position="top" data-tooltip="JSR">J
+                        </div>
+                        <div class="tooltipped badge blue brd-blue lighten-4 {{$run->KSR ? '' : 'vis-hidden'}}"
+                             data-position="top" data-tooltip="KSR">K
+                        </div>
+                        <div class="tooltipped badge red brd-red lighten-4 {{$run->MSR ? '' : 'vis-hidden'}}"
+                             data-position="top" data-tooltip="MSR">M
+                        </div>
+                        <div class="tooltipped badge grey brd-black lighten-4 {{$run->LSR ? '' : 'vis-hidden'}}"
+                             data-position="top" data-tooltip="LSR">L
+                        </div>
+                        <div class="tooltipped badge orange brd-orange lighten-4 {{$run->qualification_run ? '' : 'vis-hidden'}}"
+                             data-position="top" data-tooltip="Qualification run">Q
+                        </div>
                     </div>
                     <span class="distances">{{$run->distances}}</span>
 
@@ -33,15 +44,15 @@
                         Yes
                     @endif
                     <a href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
-                    @if(isset($run->uvponline_enrollment_id) && $run->enrollment_open)
-                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_enrollment_id}}">enroll</a>
+                    @if(isset($run->uvponline_id) && $run->enrollment_open)
+                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
                     @endif
-                    @if(isset($run->uvponline_enrollment_id) && !isset($run->uvponline_results_id))
-                        <a href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_enrollment_id}}">preliminary
+                    @if(isset($run->uvponline_id) && !isset($run->uvponline_results_id))
+                        <a href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_id}}">preliminary
                             results</a>
                     @endif
                     @if(isset($run->uvponline_results_id))
-                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_enrollment_id}}">results</a>
+                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">results</a>
                     @endif
                     @if($run->participants->count() > 0)
                         <h4>Enrollments from Delft:</h4>

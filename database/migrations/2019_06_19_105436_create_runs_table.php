@@ -28,7 +28,7 @@ class CreateRunsTable extends Migration
             $table->string('distances');
             $table->unsignedBigInteger('organiser_id');
             $table->foreign('organiser_id')->references('id')->on('organisers');
-            $table->unsignedBigInteger('uvponline_enrollment_id')->unique()->nullable();
+            $table->unsignedBigInteger('uvponline_id')->unique()->nullable();
             $table->unsignedBigInteger('uvponline_results_id')->unique()->nullable();
             $table->unique(['organiser_id', 'date']);
             $table->timestamp('details_updated')->nullable();

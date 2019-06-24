@@ -14,6 +14,10 @@
   border: solid black;
 }
 
+.brd-orange {
+  border: solid orange;
+}
+
 div.badge {
   padding: 0px 6px;
   border-radius: 11px;
@@ -48,7 +52,7 @@ span.distances {
 div.circuits {
   display: -webkit-box;
   display: flex;
-  width: 125px;
+  width: 145px;
   -webkit-box-pack: justify;
           justify-content: space-between;
 }
@@ -56,7 +60,6 @@ div.circuits {
 .list-header {
   display: -webkit-box;
   display: flex;
-  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   line-height: 1.5;
   padding: 1rem;

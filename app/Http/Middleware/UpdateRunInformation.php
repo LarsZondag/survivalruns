@@ -80,7 +80,7 @@ class UpdateRunInformation
             $run->enrollment_open = $columns->item(10)->textContent === ">schrijf hier in<";
 
             // uvponline_id
-            $run->uvponline_enrollment_id = $this->get_uvponline_enrollment_id($columns) ?: $run->uvponline_enrollment_id;
+            $run->uvponline_id = $this->get_uvponline_id($columns) ?: $run->uvponline_id;
             $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
 
             $run->save();
@@ -98,17 +98,17 @@ class UpdateRunInformation
      * @return int|null
      * @throws Exception
      */
-    private function get_uvponline_enrollment_id($columns)
+    private function get_uvponline_id($columns)
     {
-        $uvponline_enrollment_id = null;
+        $uvponline_id = null;
         $aElements = $columns->item(10)->getElementsByTagName('a'); // Enrollment
         if ($aElements->count() > 0) {
             $inschrijf_link = $aElements->item(0)->getAttribute('href');
             $link_array = explode("/", $inschrijf_link);
-            $uvponline_enrollment_id = (int)end($link_array);
+            $uvponline_id = (int)end($link_array);
         }
 
-        return $uvponline_enrollment_id;
+        return $uvponline_id;
     }
 
     /**
