@@ -7,7 +7,7 @@
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-    <link rel="stylesheet" href="{{ mix('/css/app.css') }}"></link>
+    <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -44,6 +44,8 @@
         crossorigin="anonymous"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script lang="js">M.AutoInit();</script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+<script src="{{ mix('/js/app.js') }}"></script>
+{{--<script lang="js">M.AutoInit();</script>--}}
 </body>
 </html>

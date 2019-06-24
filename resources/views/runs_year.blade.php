@@ -9,20 +9,12 @@
                 <div class="collapsible-header">
                     <span class="date">{{$run->date->format('d-m-Y')}}</span>
                     <span class="location">{{$run->organiser->location}}</span>
-                    @if($run->JSR)
-                        <div class="badge yellow brd-yellow lighten-2"> J</div>
-                    @endif
-                    @if($run->KSR)
-                        <div class="badge blue brd-blue lighten-4"> K</div>
-                    @endif
-                    @if($run->MSR)
-                        <div class="badge red brd-red lighten-4"> M</div>
-                    @endif
-                    @if($run->LSR)
-                        <div class="badge grey brd-black lighten-4"> L</div>
-                    @endif
+                    <div class="badge yellow brd-yellow lighten-2 {{$run->JSR ? '' : 'vis-hidden'}}"> J</div>
+                    <div class="badge blue brd-blue lighten-4 {{$run->KSR ? '' : 'vis-hidden'}}"> K</div>
+                    <div class="badge red brd-red lighten-4 {{$run->MSR ? '' : 'vis-hidden'}}"> M</div>
+                    <div class="badge grey brd-black lighten-4 {{$run->LSR ? '' : 'vis-hidden'}}"> L</div>
 
-                    <span>{{$run->distances}}</span>
+                    <span class="distances">{{$run->distances}}</span>
 
                     @if($run->participants->count() > 0)
                         <span class="badge">{{$run->participants->count()}}</span>

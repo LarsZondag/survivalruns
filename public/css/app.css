@@ -22,10 +22,22 @@ div.badge {
 }
 
 .collapsible-header > span {
-  margin: 0 2px;
+  margin: 0 8px;
+}
+
+.collapsible-header > div.badge.vis-hidden {
+  visibility: hidden;
 }
 
 span.date {
   font-weight: bold;
+  width: 90px;
+}
+
+span.location {
+  width: 160px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
