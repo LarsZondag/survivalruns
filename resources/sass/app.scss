@@ -1,8 +1,34 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+.brd-red {
+  border: solid red;
+}
 
-// Variables
-@import 'variables';
+.brd-blue {
+  border: solid blue;
+}
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+.brd-yellow {
+  border: solid #fdd835;
+}
+
+.brd-black {
+  border: solid black;
+}
+
+div.badge {
+  padding: 0px 6px;
+  margin: 0 3px;
+  border-radius: 11px;
+  border-width: 1.5px;
+}
+
+.collapsible-header > span {
+  margin-right: 4px;
+}
+
+span.date {
+  font-weight: bold;
+}
+
+span.organiser {
+
+}

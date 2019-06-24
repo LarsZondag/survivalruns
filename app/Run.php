@@ -26,13 +26,14 @@ use Illuminate\Support\Facades\Log;
  * @property integer organiser_id
  * @property integer uvponline_enrollment_id
  * @property integer uvponline_results_id
+ * @property Carbon  details_updated
  */
 class Run extends Model
 {
 
     protected $fillable = ['organiser_id', 'date'];
 
-    protected $dates = ['date'];
+    protected $dates = ['date', 'details_updated'];
 
     public function organiser()
     {
@@ -67,6 +68,9 @@ class Run extends Model
             }
             $this->processEnrollmentPage($category_container->getAttribute('href'), $category_container->textContent);
         }
+
+        $this->details_updated = Carbon::now();
+        $this->save();
     }
 
     private function processEnrollmentPage(string $url, string $category)
@@ -89,7 +93,6 @@ class Run extends Model
             }
             $columns = $row->getElementsByTagName('td');
             if (strcasecmp(trim($columns->item(2)->textContent, "\xC2\xA0\n"), "delft") === 0) {
-                echo "hello";
                 $props = [
                     'first_name' => $columns->item(1)->textContent,
                     'last_name'  => $columns->item(0)->textContent,
