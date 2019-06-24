@@ -34,31 +34,31 @@
                         </div>
                     </div>
                     <span class="distances">{{$run->distances}}</span>
-
-                    @if($run->participants->count() > 0)
-                        <span class="badge">{{$run->participants->count()}}</span>
-                    @endif
+                    <div class="flex-spacer"></div>
+                    <div class="badge green brd-green lighten-4 {{$run->enrollment_open ? '' : 'vis-hidden'}}"
+                         style="float: right;">Enrollment open
+                    </div>
+                    <span class="badge {{$run->participants->count() > 0 ? '' : 'vis-hidden'}}">{{$run->participants->count()}}</span>
                 </div>
                 <div class="collapsible-body">
-                    @if($run->qualification_run)
-                        Yes
-                    @endif
-                    <a href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
+                    <h5>Organiser: <a href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a></h5>
                     @if(isset($run->uvponline_id) && $run->enrollment_open)
-                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
+                        <a class="btn" href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
                     @endif
                     @if(isset($run->uvponline_id) && !isset($run->uvponline_results_id))
-                        <a href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_id}}">preliminary
+                        <a class="btn"
+                           href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_id}}">preliminary
                             results</a>
                     @endif
                     @if(isset($run->uvponline_results_id))
-                        <a href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">results</a>
+                        <a class="btn" href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">results</a>
                     @endif
                     @if($run->participants->count() > 0)
                         <h4>Enrollments from Delft:</h4>
                         <ul>
                             @foreach($run->participants as $participant)
-                                <li>{{$participant->first_name . $participant->last_name}}</li>
+                                <li>{{$participant->first_name . " " . $participant->last_name}}
+                                    - {{$participant->category}}</li>
                             @endforeach
                         </ul>
                     @endif

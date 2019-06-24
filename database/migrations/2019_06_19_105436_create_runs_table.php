@@ -31,7 +31,10 @@ class CreateRunsTable extends Migration
             $table->unsignedBigInteger('uvponline_id')->unique()->nullable();
             $table->unsignedBigInteger('uvponline_results_id')->unique()->nullable();
             $table->unique(['organiser_id', 'date']);
-            $table->timestamp('details_updated')->nullable();
+            $table->timestamp('enrollment_updated')->nullable();
+            $table->timestamp('start_times_updated')->nullable();
+            $table->timestamp('preliminary_results_updated')->nullable();
+            $table->timestamp('results_updated')->nullable();
             $table->timestamps();
         });
     }
