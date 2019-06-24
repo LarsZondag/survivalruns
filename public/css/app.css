@@ -25,7 +25,7 @@ div.badge {
   margin: 0 8px;
 }
 
-.collapsible-header > div.badge.vis-hidden {
+.circuits > div.badge.vis-hidden {
   visibility: hidden;
 }
 
