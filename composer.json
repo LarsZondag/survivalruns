@@ -60,7 +60,9 @@
         ],
         "post-install-cmd": [
             "chmod -R 775 public/",
-            "@php artisan migrate"
+            "@php artisan down",
+            "@php artisan migrate",
+            "@php artisan up"
         ]
     }
 }
