@@ -14,26 +14,12 @@
 
     <title>Survivalruns</title>
 
-    {{--    <!-- Fonts -->--}}
-    {{--    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">--}}
-
-    {{--    <!-- Styles -->--}}
-    {{--    <style>--}}
-    {{--        html, body {--}}
-    {{--            background-color: #fff;--}}
-    {{--            color: #636b6f;--}}
-    {{--            font-family: 'Nunito', sans-serif;--}}
-    {{--            font-weight: 200;--}}
-    {{--            height: 100vh;--}}
-    {{--            margin: 0;--}}
-    {{--        }--}}
-
-    {{--        .full-height {--}}
-    {{--            height: 100vh;--}}
-    {{--        }--}}
-    {{--    </style>--}}
 </head>
 <body>
+<div class="title container">
+    <h1>@yield('title')</h1>
+    @yield('title-caption')
+</div>
 <div class="container">
     @yield('content')
 </div>
@@ -46,6 +32,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 <script src="{{ mix('/js/app.js') }}"></script>
-{{--<script lang="js">M.AutoInit();</script>--}}
 </body>
 </html>

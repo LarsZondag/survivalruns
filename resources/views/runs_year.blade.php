@@ -1,19 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Page Title')
+@section('title', 'Survivalruns ' . $year . " - " . ($year + 1))
+
 @section('content')
 <div class="content">
+    <div class="list-header">
+        <span class="date">Date</span>
+        <span class="location">Location</span>
+        <div class="circuits"><span>Circuits</span></div>
+        <span class="distances">Distances</span>
+    </div>
     <ul class="collapsible">
         @foreach($runs as $run)
             <li>
                 <div class="collapsible-header">
                     <span class="date">{{$run->date->format('d-m-Y')}}</span>
                     <span class="location">{{$run->organiser->location}}</span>
-                    <div class="badge yellow brd-yellow lighten-2 {{$run->JSR ? '' : 'vis-hidden'}}"> J</div>
-                    <div class="badge blue brd-blue lighten-4 {{$run->KSR ? '' : 'vis-hidden'}}"> K</div>
-                    <div class="badge red brd-red lighten-4 {{$run->MSR ? '' : 'vis-hidden'}}"> M</div>
-                    <div class="badge grey brd-black lighten-4 {{$run->LSR ? '' : 'vis-hidden'}}"> L</div>
-
+                    <div class="circuits">
+                        <div class="badge yellow brd-yellow lighten-2 {{$run->JSR ? '' : 'vis-hidden'}}">J</div>
+                        <div class="badge blue brd-blue lighten-4 {{$run->KSR ? '' : 'vis-hidden'}}">K</div>
+                        <div class="badge red brd-red lighten-4 {{$run->MSR ? '' : 'vis-hidden'}}">M</div>
+                        <div class="badge grey brd-black lighten-4 {{$run->LSR ? '' : 'vis-hidden'}}">L</div>
+                    </div>
                     <span class="distances">{{$run->distances}}</span>
 
                     @if($run->participants->count() > 0)

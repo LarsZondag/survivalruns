@@ -16,12 +16,12 @@
 
 div.badge {
   padding: 0px 6px;
-  margin: 0 3px;
   border-radius: 11px;
   border-width: 1.5px;
 }
 
-.collapsible-header > span {
+.collapsible-header > span,
+.list-header > span {
   margin: 0 8px;
 }
 
@@ -39,5 +39,33 @@ span.location {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+span.distances {
+  margin-left: 18px;
+}
+
+div.circuits {
+  display: -webkit-box;
+  display: flex;
+  width: 125px;
+  -webkit-box-pack: justify;
+          justify-content: space-between;
+}
+
+.list-header {
+  display: -webkit-box;
+  display: flex;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.5;
+  padding: 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  margin: 0.5rem 0 1rem 0;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
