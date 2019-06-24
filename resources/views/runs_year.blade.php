@@ -41,17 +41,20 @@
                     <span class="badge {{$run->participants->count() > 0 ? '' : 'vis-hidden'}}">{{$run->participants->count()}}</span>
                 </div>
                 <div class="collapsible-body">
-                    <h5>Organiser: <a href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a></h5>
+                    <h5>Organiser: <a target="_blank" href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
+                    </h5>
                     @if(isset($run->uvponline_id) && $run->enrollment_open)
-                        <a class="btn" href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
+                        <a class="btn" target="_blank"
+                           href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
                     @endif
                     @if(isset($run->uvponline_id) && !isset($run->uvponline_results_id))
-                        <a class="btn"
+                        <a class="btn" target="_blank"
                            href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_id}}">preliminary
                             results</a>
                     @endif
                     @if(isset($run->uvponline_results_id))
-                        <a class="btn" href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">results</a>
+                        <a class="btn" target="_blank"
+                           href="https://www.uvponline.nl/uvponlineU/index.php/uitslag/toonuitslag/{{$run->year}}/{{$run->uvponline_results_id}}">results</a>
                     @endif
                     @if($run->participants->count() > 0)
                         <h4>Enrollments from Delft:</h4>
