@@ -4,8 +4,15 @@ namespace App;
 
 use Carbon\Carbon;
 use DOMDocument;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+
+//use GuzzleHttp\Client;
 
 /**
  * Class Run
@@ -54,14 +61,17 @@ class Run extends Model
         return $this->hasMany(Participant::class);
     }
 
+    /**
+     * @return array
+     */
     public function updateParticipants()
     {
         if (!isset($this->uvponline_id)) {
-            return;
+            return [];
         }
-
+        $promises_array = [];
         if (is_null($this->enrollment_updated) || $this->enrollment_updated->diffInMinutes() > config("survivalruns.update_time")) {
-            $this->updateEnrollment();
+            $promises_array[] = $this->updateEnrollment();
         }
         if (is_null($this->start_times_updated) || $this->start_times_updated->diffInMinutes() > config("survivalruns.update_time")) {
             $this->updateStartTimes();
@@ -72,8 +82,9 @@ class Run extends Model
         if (is_null($this->results_updated) || $this->results_updated->diffInMinutes() > config("survivalruns.update_time")) {
 
         }
-
         $this->save();
+
+        return $promises_array;
     }
 
     private function updateEnrollment()
@@ -89,24 +100,40 @@ class Run extends Model
             return;
         }
         $category_containers = $enrollment_container->getElementsByTagName('a');
+        $category_requests = [];
+        $categories = [];
         foreach ($category_containers as $category_container) {
             if (!strpos($category_container->getAttribute('href'), 'inschrijven_overzicht')) {
                 continue;
             }
-            $this->processEnrollmentPage($category_container->getAttribute('href'), $category_container->textContent);
+            $category_requests[] = new Request('GET', $category_container->getAttribute('href'));
+            $categories[] = $category_container->textContent;
         }
 
+        $client = new Client(["timeout" => 20,]);
+        $pool = new Pool($client, $category_requests, [
+            'concurrency' => 5,
+            'fulfilled'   => function (Response $response, $index) use ($categories) {
+                $this->processEnrollmentPage((string)$response->getBody(), $categories[$index]);
+            },
+            'rejected'    => function (GuzzleException $reason, $index) {
+                Log::error("Could not GET category enrollments: " . $reason->getMessage());
+            },
+        ]);
+        $promise = $pool->promise();
         $this->enrollment_updated = Carbon::now();
+        $promise->wait();
+
+        return $promise;
     }
 
-    private function processEnrollmentPage(string $url, string $category)
+    private function processEnrollmentPage(string $html, string $category)
     {
-        $html = file_get_contents($url);
         $dom = new DOMDocument();
         $dom->loadHTML($html);
         $overzicht_indiv = $dom->getElementById('overzicht_indiv');
         if (is_null($overzicht_indiv)) {
-            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . " url: " . $url);
+            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . " url: " . $html);
 
             return;
         }

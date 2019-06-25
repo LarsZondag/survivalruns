@@ -41,30 +41,44 @@
                     <span class="badge {{$run->participants->count() > 0 ? '' : 'vis-hidden'}}">{{$run->participants->count()}}</span>
                 </div>
                 <div class="collapsible-body">
-                    <h5>Organiser: <a target="_blank" href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
-                    </h5>
-                    @if(isset($run->uvponline_id) && $run->enrollment_open)
-                        <a class="btn" target="_blank"
-                           href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
-                    @endif
-                    @if(isset($run->uvponline_id) && !isset($run->uvponline_results_id))
-                        <a class="btn" target="_blank"
-                           href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_id}}">preliminary
-                            results</a>
-                    @endif
-                    @if(isset($run->uvponline_results_id))
-                        <a class="btn" target="_blank"
-                           href="https://www.uvponline.nl/uvponlineU/index.php/uitslag/toonuitslag/{{$run->year}}/{{$run->uvponline_results_id}}">results</a>
-                    @endif
-                    @if($run->participants->count() > 0)
-                        <h4>Enrollments from Delft:</h4>
-                        <ul>
-                            @foreach($run->participants as $participant)
-                                <li>{{$participant->first_name . " " . $participant->last_name}}
-                                    - {{$participant->category}}</li>
-                            @endforeach
-                        </ul>
-                    @endif
+                    <div class="run-info">
+                        <div class="participant-info">
+                            @if($run->participants->count() > 0)
+                                @php
+                                    $part_per_cat = $run->participants->groupBy('category');
+                                @endphp
+                                <h4>Enrollments from Delft:</h4>
+                                @foreach($part_per_cat as $category => $participants)
+                                    <h5>{{$category}}:</h5>
+                                    <ul>
+                                        @foreach($participants as $participant)
+                                            <li>{{$participant->first_name . " " . $participant->last_name}}</li>
+                                        @endforeach
+                                    </ul>
+                                @endforeach
+                            @else
+                                <h4>No enrollments from Delft</h4>
+                            @endif
+                        </div>
+                        <div class="organiser-info">
+                            <h5>Organiser: <a target="_blank"
+                                              href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
+                            </h5>
+                            @if(isset($run->uvponline_id) && $run->enrollment_open)
+                                <a class="btn" target="_blank"
+                                   href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
+                            @endif
+                            @if(isset($run->uvponline_id) && !isset($run->uvponline_results_id))
+                                <a class="btn" target="_blank"
+                                   href="https://www.uvponline.nl/uvponlineU/index.php/uitslag_rt/toonuitslag/{{$run->year}}/{{$run->uvponline_id}}">preliminary
+                                    results</a>
+                            @endif
+                            @if(isset($run->uvponline_results_id))
+                                <a class="btn" target="_blank"
+                                   href="https://www.uvponline.nl/uvponlineU/index.php/uitslag/toonuitslag/{{$run->year}}/{{$run->uvponline_results_id}}">results</a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </li>
         @endforeach

@@ -38,6 +38,8 @@ class UpdateRunInformation
         $table = $agenda->getElementsByTagName('table')->item(0);
         $rows = $table->getElementsByTagName('tr');
         $processedHeader = false;
+
+        $promises = [];
         foreach ($rows as $row) {
             if (!$processedHeader) {
                 $processedHeader = true;
@@ -83,9 +85,12 @@ class UpdateRunInformation
             $run->uvponline_id = $this->get_uvponline_id($columns) ?: $run->uvponline_id;
             $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
             $run->save();
-            $run->updateParticipants();
+            $promises = array_merge($run->updateParticipants());
         }
-
+        foreach ($promises as $promise) {
+            $promise->wait();
+            $promise->resolve();
+        }
         return $next($request);
     }
 
