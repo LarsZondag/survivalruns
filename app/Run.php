@@ -112,7 +112,7 @@ class Run extends Model
 
         $client = new Client(["timeout" => 20,]);
         $pool = new Pool($client, $category_requests, [
-            'concurrency' => 5,
+//            'concurrency' => 5,
             'fulfilled'   => function (Response $response, $index) use ($categories) {
                 $this->processEnrollmentPage((string)$response->getBody(), $categories[$index]);
             },
@@ -133,7 +133,12 @@ class Run extends Model
         $dom->loadHTML($html);
         $overzicht_indiv = $dom->getElementById('overzicht_indiv');
         if (is_null($overzicht_indiv)) {
-            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . " url: " . $html);
+            if (!is_null($dom->getElementById("overzicht_groep"))) {
+                Log::notice('Skipped enrollment data for team run: ' . $this->organiser->name . ' year: ' . $this->year . "category: " . $category);
+
+                return;
+            }
+            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . "category: " . $category);
 
             return;
         }

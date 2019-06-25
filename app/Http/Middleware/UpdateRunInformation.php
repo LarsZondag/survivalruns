@@ -89,7 +89,7 @@ class UpdateRunInformation
         }
         foreach ($promises as $promise) {
             $promise->wait();
-            $promise->resolve();
+            $promise->resolve(null);
         }
         return $next($request);
     }

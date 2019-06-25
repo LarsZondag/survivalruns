@@ -61,9 +61,9 @@
                             @endif
                         </div>
                         <div class="organiser-info">
-                            <h5>Organiser: <a target="_blank"
+                            <h4>Organiser: <a target="_blank"
                                               href="//{{$run->organiser->url}}">{{$run->organiser->name}}</a>
-                            </h5>
+                            </h4>
                             @if(isset($run->uvponline_id) && $run->enrollment_open)
                                 <a class="btn" target="_blank"
                                    href="https://www.uvponline.nl/uvponlineF/inschrijven/{{$run->uvponline_id}}">enroll</a>
