@@ -48,7 +48,7 @@
                                     $part_per_cat = $run->participants->groupBy('category');
                                 @endphp
                                 @if(isset($run->uvponline_results_id))
-                                    <h4>Enrollments from Delft:</h4>
+                                    <h4>Results from Delft:</h4>
                                     @foreach($part_per_cat as $category => $participants)
                                         <h5>{{$category}}:</h5>
                                         <ul>
