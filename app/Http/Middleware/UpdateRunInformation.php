@@ -28,6 +28,13 @@ class UpdateRunInformation
         if (!isset($request->year)) {
             throw new Exception('No year was set.');
         }
+
+        if ($run = Run::where('year', $request->year)->first()) {
+            if ($run->updated_at->diffInMinutes() <= config("survivalruns.update_time")) {
+                return $next($request);
+            }
+        }
+
         $url = 'https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema/' . $request->year;
         $html = file_get_contents($url);
         $dom = new domDocument;
@@ -84,6 +91,7 @@ class UpdateRunInformation
             // uvponline_id
             $run->uvponline_id = $this->get_uvponline_id($columns) ?: $run->uvponline_id;
             $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
+            $run->updated_at = Carbon::now();
             $run->save();
             $promises = array_merge($run->updateParticipants(), $promises);
         }
