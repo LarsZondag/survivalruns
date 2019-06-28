@@ -19,6 +19,12 @@ class CreateParticipantsTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('category');
+            $table->unsignedInteger('position')->nullable();
+            $table->boolean('DNF')->default(false);
+            $table->boolean('DNS')->default(false);
+            $table->time('time')->nullable();
+            $table->unsignedInteger('startnr')->nullable();
+            $table->unsignedInteger('points')->nullable();
             $table->unsignedBigInteger('run_id');
             $table->foreign('run_id')->references('id')->on('runs');
             $table->timestamps();

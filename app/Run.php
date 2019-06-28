@@ -66,63 +66,81 @@ class Run extends Model
      */
     public function updateParticipants()
     {
-        if (!isset($this->uvponline_id)) {
-            return [];
-        }
+        $uvponline_id_set = isset($this->uvponline_id);
+        $uvponline_results_id_set = isset($this->uvponline_results_id);
         $promises_array = [];
-        if (is_null($this->enrollment_updated) || $this->enrollment_updated->diffInMinutes() > config("survivalruns.update_time")) {
-            $promises_array[] = $this->updateEnrollment();
-        }
-        if (is_null($this->start_times_updated) || $this->start_times_updated->diffInMinutes() > config("survivalruns.update_time")) {
-            $this->updateStartTimes();
-        }
-        if (is_null($this->preliminary_results_updated) || $this->preliminary_results_updated->diffInMinutes() > config("survivalruns.update_time")) {
 
-        }
-        if (is_null($this->results_updated) || $this->results_updated->diffInMinutes() > config("survivalruns.update_time")) {
+        // Data depending on $uvponline_id
+        if ($uvponline_id_set && !$uvponline_results_id_set) {
 
+            $run_is_in_future = $this->date->isAfter(Carbon::now());
+            $enrollment_updated_is_null = is_null($this->enrollment_updated);
+            $update_expired = $enrollment_updated_is_null || $this->enrollment_updated->diffInMinutes() > config("survivalruns.update_time");
+            $enrollment_not_updated_before_date = !$enrollment_updated_is_null && $this->enrollment_updated->diffInMinutes($this->date) > config("survivalruns.update_time");
+            if ($run_is_in_future && $update_expired || $enrollment_not_updated_before_date) {
+                $promises_array[] = $this->updateEnrollment();
+            }
+
+            if (is_null($this->start_times_updated) || $this->start_times_updated->diffInMinutes() > config("survivalruns.update_time")) {
+                $this->updateStartTimes();
+            }
+
+            $run_is_now_or_in_past = $this->date->lte(Carbon::now());
+            $update_expired = is_null($this->preliminary_results_updated) || $this->preliminary_results_updated->diffInMinutes() > config("survivalruns.update_time");
+            if ($run_is_now_or_in_past && $update_expired) {
+                // TODO: get preliminary results.
+            }
         }
+
+        // Data depending on $uvponline_results_id
+        if ($uvponline_results_id_set) {
+            if (is_null($this->results_updated) || $this->results_updated->diffInMinutes() > config("survivalruns.update_time")) {
+                $promises_array[] = $this->updateResults();
+            }
+        }
+
         $this->save();
-
         return $promises_array;
     }
 
     private function updateEnrollment()
     {
-        $url = "https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/" . $this->uvponline_id;
-        $html = file_get_contents($url);
-        $dom = new DOMDocument;
-        $dom->loadHTML($html);
-        $enrollment_container = $dom->getElementById('ingeschreven_cats');
-        if (is_null($enrollment_container)) {
-            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . " url: " . $url);
-
-            return;
-        }
-        $category_containers = $enrollment_container->getElementsByTagName('a');
-        $category_requests = [];
-        $categories = [];
-        foreach ($category_containers as $category_container) {
-            if (!strpos($category_container->getAttribute('href'), 'inschrijven_overzicht')) {
-                continue;
-            }
-            $category_requests[] = new Request('GET', $category_container->getAttribute('href'));
-            $categories[] = $category_container->textContent;
-        }
-
         $client = new Client(["timeout" => 20,]);
-        $pool = new Pool($client, $category_requests, [
-//            'concurrency' => 5,
-            'fulfilled'   => function (Response $response, $index) use ($categories) {
-                $this->processEnrollmentPage((string)$response->getBody(), $categories[$index]);
-            },
-            'rejected'    => function (GuzzleException $reason, $index) {
-                Log::error("Could not GET category enrollments: " . $reason->getMessage());
-            },
-        ]);
-        $promise = $pool->promise();
+        $url = "https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/" . $this->uvponline_id;
+        $promise = $client->getAsync($url)->then(function (Response $response) {
+            $html = $response->getBody();
+            $dom = new DOMDocument;
+            $dom->loadHTML($html);
+            $enrollment_container = $dom->getElementById('ingeschreven_cats');
+            if (is_null($enrollment_container)) {
+                Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year);
+
+                return;
+            }
+            $category_containers = $enrollment_container->getElementsByTagName('a');
+            $category_requests = [];
+            $categories = [];
+            foreach ($category_containers as $category_container) {
+                if (!strpos($category_container->getAttribute('href'), 'inschrijven_overzicht')) {
+                    continue;
+                }
+                $category_requests[] = new Request('GET', $category_container->getAttribute('href'));
+                $categories[] = $category_container->textContent;
+            }
+            $client = new Client(["timeout" => 20,]);
+            $pool = new Pool($client, $category_requests, [
+                'fulfilled' => function (Response $response, $index) use ($categories) {
+                    $this->processEnrollmentPage((string)$response->getBody(), $categories[$index]);
+                },
+                'rejected'  => function (GuzzleException $reason, $index) {
+                    Log::error("Could not GET category enrollments: " . $reason->getMessage());
+                },
+            ]);
+            $promise = $pool->promise();
+            $promise->wait();
+            $promise->resolve(null);
+        });
         $this->enrollment_updated = Carbon::now();
-        $promise->wait();
 
         return $promise;
     }
@@ -134,11 +152,11 @@ class Run extends Model
         $overzicht_indiv = $dom->getElementById('overzicht_indiv');
         if (is_null($overzicht_indiv)) {
             if (!is_null($dom->getElementById("overzicht_groep"))) {
-                Log::notice('Skipped enrollment data for team run: ' . $this->organiser->name . ' year: ' . $this->year . "category: " . $category);
+                Log::notice('Skipped enrollment data for team run: ' . $this->organiser->name . ' year: ' . $this->year . " category: " . $category);
 
                 return;
             }
-            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . "category: " . $category);
+            Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year . " category: " . $category);
 
             return;
         }
@@ -174,7 +192,93 @@ class Run extends Model
 
     private function updateResults()
     {
-        return;
+        $this->participants()->delete();
+        $client = new Client(["timeout" => 20,]);
+        $url = "https://www.uvponline.nl/uvponlineU/index.php/uitslag/toonuitslag/" . $this->year . "/" . $this->uvponline_results_id;
+        $promise = $client->getAsync($url)->then(function (Response $response) {
+            $html = $response->getBody();
+            $dom = new DOMDocument;
+            $dom->loadHTML($html);
+            $results_table = $dom->getElementsByTagName('table');
+            if ($results_table->count() == 0) {
+                Log::notice("No results table found for: " . $this->organiser->name . " " . $this->year);
+            }
+            $results_table = $results_table->item(0);
+            $category_containers = $results_table->getElementsByTagName('tr');
+            $category_requests = [];
+            $categories = [];
+            foreach ($category_containers as $category_container) {
+                $category_results = $category_container->getElementsByTagName('td');
+                $category = trim($category_results[1]->textContent, "\xC2\xA0\n");
+                for ($i = 2; $i < $category_results->count(); $i++) {
+                    $url = $category_results[$i]->getElementsByTagName('a');
+                    if ($url->count() == 0) {
+                        break;
+                    }
+                    $url = $url->item(0)->getAttribute('href');
+                    $category_requests[] = new Request('GET', $url);
+                    $categories[] = $category;
+                }
+            }
+            $client = new Client(["timeout" => 20,]);
+            $pool = new Pool($client, $category_requests, [
+                'fulfilled' => function (Response $response, $index) use ($categories) {
+                    $this->processResultsPage((string)$response->getBody(), $categories[$index]);
+                },
+                'rejected'  => function (GuzzleException $reason, $index) {
+                    Log::error("Could not GET category enrollments: " . $reason->getMessage());
+                },
+            ]);
+            $promise = $pool->promise();
+            $promise->wait();
+            $promise->resolve(null);
+        });
+
+        $this->results_updated = Carbon::now();
+
+        return $promise;
     }
 
+    private function processResultsPage(string $html, string $category)
+    {
+        $dom = new DOMDocument();
+        $dom->loadHTML($html);
+        $table = $dom->getElementsByTagName('table');
+        if ($table->count() == 0) {
+            Log::notice('No results table found for run: ' . $this->organiser->name . " " . $this->year . " category: " . $category);
+        }
+        $table = $table->item(0);
+        $rows = $table->getElementsByTagName('tr');
+
+        // Check if team run, otherwise skip this entry
+        $name = trim($rows->item(0)->getElementsbyTagName('td')->item(1)->textContent, "\xC2\xA0\n");
+        if (strcasecmp($name, "team") === 0) {
+            Log::notice('Skipped results data for team run: ' . $this->organiser->name . ' year: ' . $this->year . " category: " . $category);
+        }
+
+        for ($i = 1; $i < $rows->count(); $i++) {
+            $row = $rows->item($i)->getElementsByTagName('td');
+            if (strcasecmp(trim($row->item(3)->textContent, "\xC2\xA0\n"), "delft") === 0) {
+                $props = [
+                    'first_name' => trim($row->item(1)->textContent, " \t\n\r\0\v\xC2\xA0\n"),
+                    'last_name'  => trim($row->item(2)->textContent, " \t\n\r\0\v\xC2\xA0\n"),
+                    'category'   => $category,
+                    'startnr'    => (int)trim($row->item(5)->textContent, " \t\n\r\0\v\xC2\xA0\n"),
+                    'time'       => trim($row->item(6)->textContent, " \t\n\r\0\v\xC2\xA0\n"),
+                    'points'     => (int)str_replace('.', "",
+                        trim($row->item(8)->textContent, " \t\n\r\0\v\xC2\xA0\n")),
+                    'run_id'     => $this->id,
+                ];
+                $position = strtoupper(trim($row->item(0)->textContent, " \t\n\r\0\v\xC2\xA0\n"));
+                if (ctype_digit($position)) {
+                    $props["position"] = $position;
+                } elseif ($position == "DNS") {
+                    $props["DNS"] = true;
+                } elseif ($position == "DNF") {
+                    $props["DNF"] = true;
+                }
+                Participant::firstOrCreate($props);
+            }
+        }
+    }
 }

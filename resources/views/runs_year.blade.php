@@ -47,15 +47,32 @@
                                 @php
                                     $part_per_cat = $run->participants->groupBy('category');
                                 @endphp
-                                <h4>Enrollments from Delft:</h4>
-                                @foreach($part_per_cat as $category => $participants)
-                                    <h5>{{$category}}:</h5>
-                                    <ul>
-                                        @foreach($participants as $participant)
-                                            <li>{{$participant->first_name . " " . $participant->last_name}}</li>
-                                        @endforeach
-                                    </ul>
-                                @endforeach
+                                @if(isset($run->uvponline_results_id))
+                                    <h4>Enrollments from Delft:</h4>
+                                    @foreach($part_per_cat as $category => $participants)
+                                        <h5>{{$category}}:</h5>
+                                        <ul>
+                                            @foreach($participants as $participant)
+                                                <li>
+                                                    {{$participant->position}} {{$participant->DNS ? 'DNS' : ''}} {{$participant->DNF ? 'DNF' : ''}}
+                                                    - {{$participant->time}}
+                                                    - {{$participant->first_name}} {{$participant->last_name}}
+                                                    - {{$participant->points/100}}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endforeach
+                                @else
+                                    <h4>Enrollments from Delft:</h4>
+                                    @foreach($part_per_cat as $category => $participants)
+                                        <h5>{{$category}}:</h5>
+                                        <ul>
+                                            @foreach($participants as $participant)
+                                                <li>{{$participant->first_name . " " . $participant->last_name}}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endforeach
+                                @endif
                             @else
                                 <h4>No enrollments from Delft</h4>
                             @endif

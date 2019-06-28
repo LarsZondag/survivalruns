@@ -85,7 +85,7 @@ class UpdateRunInformation
             $run->uvponline_id = $this->get_uvponline_id($columns) ?: $run->uvponline_id;
             $run->uvponline_results_id = $this->get_uvponline_results_id($columns) ?: $run->uvponline_results_id;
             $run->save();
-            $promises = array_merge($run->updateParticipants());
+            $promises = array_merge($run->updateParticipants(), $promises);
         }
         foreach ($promises as $promise) {
             $promise->wait();
