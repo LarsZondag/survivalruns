@@ -94,7 +94,7 @@ class Run extends Model
 
         // Data depending on $uvponline_results_id
         if ($uvponline_results_id_set) {
-            if (is_null($this->results_updated) || $this->results_updated->diffInMinutes() > config("survivalruns.update_time")) {
+            if (is_null($this->results_updated)) {
                 $promises_array[] = $this->updateResults();
             }
         }
