@@ -23,6 +23,10 @@ class CreateRunsTable extends Migration
             $table->boolean('MSR')->default(false);
             $table->boolean('KSR')->default(false);
             $table->boolean('JSR')->default(false);
+            $table->boolean('ONK_LSR')->default(false);
+            $table->boolean('ONK_MSR')->default(false);
+            $table->boolean('ONK_KSR')->default(false);
+            $table->boolean('ONK_JSR')->default(false);
             $table->boolean('qualification_run')->default(false);
             $table->integer('year');
             $table->string('distances');

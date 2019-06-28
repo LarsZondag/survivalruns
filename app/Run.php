@@ -27,6 +27,10 @@ use Illuminate\Support\Facades\Log;
  * @property boolean MSR
  * @property boolean KSR
  * @property boolean JSR
+ * @property boolean ONK_LSR
+ * @property boolean ONK_MSR
+ * @property boolean ONK_KSR
+ * @property boolean ONK_JSR
  * @property boolean qualification_run
  * @property integer year
  * @property string  distances

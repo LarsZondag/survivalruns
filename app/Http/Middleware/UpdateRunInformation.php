@@ -61,7 +61,8 @@ class UpdateRunInformation
 
             $organiser_name = $columns->item(9)->textContent;
 
-            $organiser_location = Organiser::clean_place_name($columns->item(1)->textContent);
+            $uvp_location = $columns->item(1)->textContent;
+            $organiser_location = Organiser::clean_place_name($uvp_location);
 
             $organiser = Organiser::updateOrCreate(['url' => $organiser_url],
                 ['name' => $organiser_name, 'location' => $organiser_location]);
@@ -78,6 +79,22 @@ class UpdateRunInformation
             $run->MSR = $columns->item(3)->textContent == "M";
             $run->KSR = $columns->item(4)->textContent == "K";
             $run->JSR = $columns->item(5)->textContent == "J";
+
+            // Check if it is an ONK
+            if (strripos($uvp_location, "ONK") !== false) {
+                $uvp_location = trim($uvp_location, "\xC2\xA0\n");
+                $substr_start = strripos($uvp_location, "ONK");
+                $category = substr($uvp_location, $substr_start + 4, 3);
+                if ($category === "JSR") {
+                    $run->ONK_JSR = true;
+                } elseif ($category === "KSR") {
+                    $run->ONK_KSR = true;
+                } elseif ($category === "MSR") {
+                    $run->ONK_MSR = true;
+                } elseif ($category === "LSR") {
+                    $run->ONK_LSR = true;
+                }
+            }
 
             // Qualification run
             $run->qualification_run = strpos($columns->item(6)->textContent, "run") !== false;
