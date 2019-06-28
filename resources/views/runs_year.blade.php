@@ -2,6 +2,19 @@
 
 @section('title', 'Survivalruns ' . $year . " - " . ($year + 1))
 
+@section('title-caption')
+    @php
+        $date = \Carbon\Carbon::now();
+        $current_year = $date->year;
+        if ($date->month < 9) {
+            $current_year--;
+        }
+    @endphp
+    <a class="btn" href="{{url($year-1)}}">Previous season</a>
+    @if($year <= $current_year)<a class="btn" href="{{url($year+1)}}">Next season</a>
+    @endif
+@endsection
+
 @section('content')
 <div class="content">
     <div class="list-header">

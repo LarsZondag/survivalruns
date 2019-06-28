@@ -17,8 +17,8 @@
 </head>
 <body>
 <div class="title container">
-    <h1>@yield('title')</h1>
-    @yield('title-caption')
+    <h1 style="display: inline-block;">@yield('title')</h1>
+    <div class="title-caption">@yield('title-caption')</div>
 </div>
 <div class="container">
     @yield('content')
