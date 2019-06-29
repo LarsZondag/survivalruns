@@ -28,6 +28,10 @@ div.badge {
   border-width: 1.5px;
 }
 
+div.collapsible-header > div.badge {
+  margin-left: 16px;
+}
+
 div.collapsible-header, div.collapsible-body {
   padding: 1.3rem;
 }

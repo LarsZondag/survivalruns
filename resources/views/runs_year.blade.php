@@ -65,8 +65,8 @@
                              data-position="top" data-tooltip="ONK LSR">ONK LSR
                         </div>
                     @endif
-                    <div class="badge green brd-green lighten-4 {{$run->enrollment_open ? '' : 'vis-hidden'}}"
-                         style="float: right;">Enrollment open
+                    <div class="badge green brd-green lighten-4 {{$run->enrollment_open ? '' : 'vis-hidden'}}">
+                        Enrollment open
                     </div>
                     <span class="badge {{$run->participants->count() > 0 ? '' : 'vis-hidden'}}">{{$run->participants->count()}}</span>
                 </div>
