@@ -81,16 +81,22 @@
                                     <h4>Results from Delft:</h4>
                                     @foreach($part_per_cat as $category => $participants)
                                         <h5>{{$category}}:</h5>
-                                        <ul>
+                                        <table>
+                                            <tr>
+                                                <th>Pos.</th>
+                                                <th>Time</th>
+                                                <th>Name</th>
+                                                <th>Points</th>
+                                            </tr>
                                             @foreach($participants as $participant)
-                                                <li>
-                                                    {{$participant->position}} {{$participant->DNS ? 'DNS' : ''}} {{$participant->DNF ? 'DNF' : ''}}
-                                                    - {{$participant->time}}
-                                                    - {{$participant->first_name}} {{$participant->last_name}}
-                                                    - {{$participant->points/100}}
-                                                </li>
+                                                <tr>
+                                                    <td class="pos-col">{{$participant->position}} {{$participant->DNS ? 'DNS' : ''}} {{$participant->DNF ? 'DNF' : ''}}</td>
+                                                    <td class="time-col">{{$participant->time}}</td>
+                                                    <td class="name-col">{{$participant->first_name}} {{$participant->last_name}}</td>
+                                                    <td class="points-col">{{$participant->points/100}}</td>
+                                                </tr>
                                             @endforeach
-                                        </ul>
+                                        </table>
                                     @endforeach
                                 @else
                                     <h4>Enrollments from Delft:</h4>
@@ -103,6 +109,8 @@
                                         </ul>
                                     @endforeach
                                 @endif
+                            @elseif ($run->date->isPast())
+                                <h4>No results from Delft</h4>
                             @else
                                 <h4>No enrollments from Delft</h4>
                             @endif

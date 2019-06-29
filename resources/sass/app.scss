@@ -28,8 +28,23 @@ div.badge {
   border-width: 1.5px;
 }
 
+div.collapsible-header, div.collapsible-body {
+  padding: 1.3rem;
+}
+
 .collapsible-header > span, .list-header > span {
-  margin: 0 8px;
+  margin-right: 16px;
+}
+
+div.collapsible-body h4 {
+  font-size: 1.7rem;
+  margin: 0;
+  margin-bottom: 0.7rem;
+}
+
+div.collapsible-body h5 {
+  font-size: 1.25rem;
+  margin: 0.5rem 0;
 }
 
 .vis-hidden {
@@ -88,4 +103,28 @@ div.circuits {
 .title-caption {
   float: right;
   margin: 4.8rem 0 1.68rem 0;
+}
+
+td, th {
+  padding: 0 10px 0 0;
+}
+
+td.pos-col {
+  width: 35px;
+}
+
+td.time-col {
+  width: 60px;
+}
+
+td.name-col {
+  width: 200px;
+}
+
+td.points-col {
+  width: 50px;
+}
+
+table {
+  margin-bottom: 15px;
 }
