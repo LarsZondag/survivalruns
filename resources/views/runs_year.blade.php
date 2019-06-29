@@ -49,20 +49,16 @@
                     <span class="distances">{{$run->distances}}</span>
                     <div class="flex-spacer"></div>
                     @if($run->ONK_JSR)
-                        <div class="tooltipped badge yellow brd-yellow lighten-2"
-                             data-position="top" data-tooltip="ONK JSR">ONK JSR
+                        <div class="badge yellow brd-yellow lighten-2">ONK JSR
                         </div>
                     @elseif($run->ONK_KSR)
-                        <div class="tooltipped badge blue brd-blue lighten-4"
-                             data-position="top" data-tooltip="ONK KSR">ONK KSR
+                        <div class="badge blue brd-blue lighten-4">ONK KSR
                         </div>
                     @elseif($run->ONK_MSR)
-                        <div class="tooltipped badge red brd-red lighten-4"
-                             data-position="top" data-tooltip="ONK MSR">ONK MSR
+                        <div class="badge red brd-red lighten-4">ONK MSR
                         </div>
                     @elseif($run->ONK_LSR)
-                        <div class="tooltipped badge grey brd-black lighten-4"
-                             data-position="top" data-tooltip="ONK LSR">ONK LSR
+                        <div class="badge grey brd-black lighten-4">ONK LSR
                         </div>
                     @endif
                     <div class="badge green brd-green lighten-4 {{$run->enrollment_open ? '' : 'vis-hidden'}}">
