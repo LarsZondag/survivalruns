@@ -109,24 +109,36 @@ div.circuits {
   margin: 4.8rem 0 1.68rem 0;
 }
 
+.sortable th:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 td, th {
   padding: 0 10px 0 0;
 }
 
-td.pos-col {
-  width: 35px;
-}
-
-td.time-col {
+th.pos-col {
   width: 60px;
 }
 
-td.name-col {
+th.time-col {
+  width: 60px;
+}
+
+th.name-col {
   width: 200px;
 }
 
-td.points-col {
-  width: 50px;
+th.points-col {
+  width: 70px;
+}
+
+th.sort-asc::after {
+  content: "↑";
+}
+th.sort-desc::after {
+  content: "↓";
 }
 
 table {

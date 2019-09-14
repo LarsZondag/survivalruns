@@ -77,19 +77,19 @@
                                     <h4>Results from Delft:</h4>
                                     @foreach($part_per_cat as $category => $participants)
                                         <h5>{{$category}}:</h5>
-                                        <table>
+                                        <table class="sortable">
                                             <tr>
-                                                <th>Pos.</th>
-                                                <th>Time</th>
-                                                <th>Name</th>
-                                                <th>Points</th>
+                                                <th class="pos-col">Pos. <span></span></th>
+                                                <th class="time-col">Time</th>
+                                                <th class="name-col">Name</th>
+                                                <th class="points-col">Points</th>
                                             </tr>
                                             @foreach($participants as $participant)
                                                 <tr>
-                                                    <td class="pos-col">{{$participant->position}} {{$participant->DNS ? 'DNS' : ''}} {{$participant->DNF ? 'DNF' : ''}}</td>
-                                                    <td class="time-col">{{$participant->time}}</td>
-                                                    <td class="name-col">{{$participant->first_name}} {{$participant->last_name}}</td>
-                                                    <td class="points-col">{{$participant->points/100}}</td>
+                                                    <td>{{$participant->position}} {{$participant->DNS ? 'DNS' : ''}} {{$participant->DNF ? 'DNF' : ''}}</td>
+                                                    <td>{{$participant->time}}</td>
+                                                    <td>{{$participant->first_name}} {{$participant->last_name}}</td>
+                                                    <td>{{$participant->points/100}}</td>
                                                 </tr>
                                             @endforeach
                                         </table>
@@ -98,7 +98,7 @@
                                     <h4>Enrollments from Delft:</h4>
                                     @foreach($part_per_cat as $category => $participants)
                                         <h5>{{$category}}:</h5>
-                                        <ul>
+                                        <ul id="{{$run->name . $category}}">
                                             @foreach($participants as $participant)
                                                 <li>{{$participant->first_name . " " . $participant->last_name}}</li>
                                             @endforeach

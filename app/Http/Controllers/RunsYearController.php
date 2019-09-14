@@ -13,7 +13,7 @@ class RunsYearController extends Controller
         $runs = Run::where('year', $request->year)->with([
             'organiser',
             'participants' => function ($query) {
-                $query->orderBy('position', 'ASC');
+                $query->orderBy('points', 'DESC');
             }
         ])->orderBy('date', 'asc')->get();
 
