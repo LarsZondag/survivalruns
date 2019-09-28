@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.default')
 
 @section('title', 'Survivalruns ' . $year . " - " . ($year + 1))
 

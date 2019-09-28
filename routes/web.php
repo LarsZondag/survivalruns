@@ -22,4 +22,11 @@ Route::get('/', function () {
     return redirect($year);
 });
 
+Route::middleware(['auth'])->group(function() {
+    Route::get('/admin', 'AdminController@index')->name('admin');
+    Route::post('/new_members', 'MemberController@replace_all');
+});
+
+Auth::routes();
+
 Route::get('/{year}', 'RunsYearController@index')->middleware('updateRunInformation');

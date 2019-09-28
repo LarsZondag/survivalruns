@@ -228,4 +228,10 @@ return [
 
     ],
 
+    "admin" => [
+        "name" => env('ADMIN_NAME', 'admin'),
+        "email" => env('ADMIN_EMAIL', 'admin@survivalruns.nl'),
+        "password" => env('ADMIN_PASSWORD', 'admin'),
+    ]
+
 ];
