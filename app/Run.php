@@ -65,6 +65,10 @@ class Run extends Model
         return $this->hasMany(Participant::class);
     }
 
+    public function members() {
+        return $this->belongsToMany('App\Member');
+    }
+
     /**
      * @return array
      */

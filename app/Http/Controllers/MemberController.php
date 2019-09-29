@@ -22,11 +22,14 @@ class MemberController extends Controller
         }, $new_members);
         $new_members = collect($new_members);
         $current_members = Member::all();
-        dd($current_members->pluck(['first_name', 'last_name']));
-        $diff = $current_members->diff($new_members);
-        dd($diff);
-        // dd($new_members);
-        dd($new_members->diff($current_members));
-
+        $diff = $current_members->diffByKeys(['first_name', 'last_name'], $new_members);
+        $diff->each(function($object) {
+            $object->delete();
+        });
+        $new_members_to_save = $new_members->diffByKeys(['first_name', 'last_name'], Member::all());
+        $new_members_to_save->each(function($model) {
+            $model->save();
+        });
+        return redirect('admin');
     }
 }

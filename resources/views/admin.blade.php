@@ -3,9 +3,11 @@
 @section('content')
 <div class="content">
     <h1>Members:</h1>
-    @foreach($members as $member)
-        <p>{{$member->first_name}}</p>
-    @endforeach
+    <ul>
+        @foreach($members as $member)
+            <li>{{$member->full_name}}</li>
+        @endforeach
+    </ul>
 
     Replace all members:
     <form action="new_members" method="POST" >
