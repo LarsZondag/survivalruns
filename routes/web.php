@@ -29,4 +29,4 @@ Route::middleware(['auth'])->group(function() {
 
 Auth::routes();
 
-Route::get('/{year}', 'RunsYearController@index')->middleware('updateRunInformation');
+Route::get('/{year}', 'RunsYearController@index');

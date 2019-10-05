@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Log;
 class Run extends Model
 {
 
-    protected $fillable = ['organiser_id', 'date'];
+    protected $guarded = [];
 
     protected $dates = [
         'date',
