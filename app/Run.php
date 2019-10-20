@@ -11,6 +11,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\DomCrawler\Crawler;
 
 //use GuzzleHttp\Client;
 
@@ -90,7 +91,7 @@ class Run extends Model
             }
 
             if (is_null($this->start_times_updated) || $this->start_times_updated->diffInMinutes() > config("survivalruns.update_time")) {
-                $this->updateStartTimes();
+                // $this->updateStartTimes();
             }
 
             $run_is_now_or_in_past = $this->date->lte(Carbon::now());
@@ -103,7 +104,7 @@ class Run extends Model
         // Data depending on $uvponline_results_id
         if ($uvponline_results_id_set) {
             if (is_null($this->results_updated)) {
-                $promises_array[] = $this->updateResults();
+                // $promises_array[] = $this->updateResults();
             }
         }
 
@@ -116,37 +117,47 @@ class Run extends Model
         $client = new Client(["timeout" => 20,]);
         $url = "https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/" . $this->uvponline_id;
         $promise = $client->getAsync($url)->then(function (Response $response) {
-            $html = $response->getBody();
-            $dom = new DOMDocument;
-            $dom->loadHTML($html);
-            $enrollment_container = $dom->getElementById('ingeschreven_cats');
-            if (is_null($enrollment_container)) {
-                Log::notice('Could not retrieve participants for: ' . $this->organiser->name . ' year: ' . $this->year);
-
-                return;
-            }
-            $category_containers = $enrollment_container->getElementsByTagName('a');
-            $category_requests = [];
-            $categories = [];
-            foreach ($category_containers as $category_container) {
-                if (!strpos($category_container->getAttribute('href'), 'inschrijven_overzicht')) {
-                    continue;
-                }
-                $category_requests[] = new Request('GET', $category_container->getAttribute('href'));
-                $categories[] = $category_container->textContent;
-            }
+            $html = utf8_decode($response->getBody());
+            $crawler = new Crawler($html);
+            
+            $categories = $crawler->filter('a[href*="inschrijven_overzicht"]')->each(function(Crawler $node, $i) {
+                return [$node->text() => new Request('GET', $node->attr('href'))];
+            });
+            
+            dd($categories);
             $client = new Client(["timeout" => 20,]);
-            $pool = new Pool($client, $category_requests, [
-                'fulfilled' => function (Response $response, $index) use ($categories) {
-                    $this->processEnrollmentPage((string)$response->getBody(), $categories[$index]);
+            $pool = new Pool($client, $categories, [
+                'fulfilled' => function (Response $response, $key) use ($categories) {
+                    $this->processEnrollmentPage((string)$response->getBody(), $key);
                 },
-                'rejected'  => function (GuzzleException $reason, $index) {
+                'rejected'  => function (GuzzleException $reason, $key) {
                     Log::error("Could not GET category enrollments: " . $reason->getMessage());
                 },
             ]);
             $promise = $pool->promise();
             $promise->wait();
-            $promise->resolve(null);
+            // dd($categories);
+            return;
+            // $category_containers = $enrollment_container->getElementsByTagName('a');
+            // foreach ($category_containers as $category_container) {
+            //     if (!strpos($category_container->getAttribute('href'), 'inschrijven_overzicht')) {
+            //         continue;
+            //     }
+            //     $category_requests[] = new Request('GET', $category_container->getAttribute('href'));
+            //     $categories[] = $category_container->textContent;
+            // }
+            // $client = new Client(["timeout" => 20,]);
+            // $pool = new Pool($client, $category_requests, [
+            //     'fulfilled' => function (Response $response, $index) use ($categories) {
+            //         $this->processEnrollmentPage((string)$response->getBody(), $categories[$index]);
+            //     },
+            //     'rejected'  => function (GuzzleException $reason, $index) {
+            //         Log::error("Could not GET category enrollments: " . $reason->getMessage());
+            //     },
+            // ]);
+            // $promise = $pool->promise();
+            // $promise->wait();
+            // $promise->resolve(null);
         });
         $this->enrollment_updated = Carbon::now();
 
@@ -205,12 +216,13 @@ class Run extends Model
         $url = "https://www.uvponline.nl/uvponlineU/index.php/uitslag/toonuitslag/" . $this->year . "/" . $this->uvponline_results_id;
         $promise = $client->getAsync($url)->then(function (Response $response) {
             $html = $response->getBody();
-            $dom = new DOMDocument;
-            $dom->loadHTML($html);
-            $results_table = $dom->getElementsByTagName('table');
+            $crawler = new Crawler($html);
+
+            $results_table = $crawler->filter('table');
             if ($results_table->count() == 0) {
                 Log::notice("No results table found for: " . $this->organiser->name . " " . $this->year);
             }
+            return;
             $results_table = $results_table->item(0);
             $category_containers = $results_table->getElementsByTagName('tr');
             $category_requests = [];

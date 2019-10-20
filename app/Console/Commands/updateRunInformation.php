@@ -107,8 +107,11 @@ class updateRunInformation extends Command
             return $run;
         });
 
-        foreach ($runs as $run) {
-            $run->updateParticipants();
+        $promises_array = array_map(function($a) {return $a->updateParticipants();}, $runs);
+        foreach ($promises_array as $promises) {
+            foreach ($promises as $promise) {
+                $promise->wait();
+            }
         }
     }
 }
