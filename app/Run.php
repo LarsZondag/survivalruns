@@ -98,7 +98,7 @@ class Run extends Model
 
         // Data depending on $uvponline_results_id
         if ($uvponline_results_id_set) {
-            if (is_null($this->results_updated)) {
+            if (is_null($this->results_updated) || $this->date->diffInYears() < 1 ) {
                 $promises_array[] = $this->updateResults();
             }
         }
